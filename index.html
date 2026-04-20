@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulário de Endereço</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f5f7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: #1a1a2e;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .card-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .card-header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .card-header p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-row.cols-1-2 { grid-template-columns: 1fr 2fr; }
+    .form-row.cols-3   { grid-template-columns: 1fr 1fr 1fr; }
+    .form-row.cols-2-1 { grid-template-columns: 2fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"] {
+      height: 40px;
+      padding: 0 12px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #111827;
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    }
+
+    input[readonly] {
+      background: #f9fafb;
+      color: #6b7280;
+      cursor: default;
+    }
+
+    input[readonly]:focus {
+      border-color: #d1d5db;
+      box-shadow: none;
+    }
+
+    .cep-wrapper { position: relative; }
+
+    .cep-wrapper input { padding-right: 40px; }
+
+    .cep-spinner {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e5e7eb;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    .cep-status {
+      font-size: 12px;
+      min-height: 16px;
+      margin-top: 3px;
+    }
+
+    .cep-status.success { color: #059669; }
+    .cep-status.error   { color: #dc2626; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #f3f4f6;
+      margin: 1.5rem 0;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9ca3af;
+      margin-bottom: 14px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 44px;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-submit:hover  { background: #4f46e5; }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { background: #c7d2fe; cursor: not-allowed; }
+
+    .success-banner {
+      display: none;
+      background: #ecfdf5;
+      border: 1.5px solid #6ee7b7;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 1.25rem;
+      font-size: 13px;
+      color: #065f46;
+    }
+
+    .success-banner strong { font-weight: 600; }
+
+    .success-banner pre {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      color: #064e3b;
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 1.5rem 1.25rem; }
+      .form-row.cols-1-2,
+      .form-row.cols-3,
+      .form-row.cols-2-1 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <h1>Cadastro de endereço</h1>
+    <p>Digite o CEP e os campos serão preenchidos automaticamente.</p>
+  </div>
+
+  <form id="form-endereco" novalidate>
+
+    <p class="section-label">Localização</p>
+
+    <div class="form-row cols-1-2">
+      <div class="field">
+        <label for="cep">CEP</label>
+        <div class="cep-wrapper">
+          <input type="tel" id="cep" name="cep" maxlength="9"
+                 placeholder="00000-000" autocomplete="postal-code" />
+          <div class="cep-spinner" id="spinner"></div>
+        </div>
+        <span class="cep-status" id="cep-status"></span>
+      </div>
+
+      <div class="field">
+        <label for="logradouro">Logradouro</label>
+        <input type="text" id="logradouro" name="logradouro"
+               placeholder="Rua, Avenida..." readonly />
+      </div>
+    </div>
+
+    <div class="form-row cols-3">
+      <div class="field">
+        <label for="numero">Número</label>
+        <input type="text" id="numero" name="numero" placeholder="Ex: 123" />
+      </div>
+
+      <div class="field">
+        <label for="complemento">Complemento</label>
+        <input type="text" id="complemento" name="complemento"
+               placeholder="Apto, Bloco..." />
+      </div>
+
+      <div class="field">
+        <label for="bairro">Bairro</label>
+        <input type="text" id="bairro" name="bairro"
+               placeholder="Bairro" readonly />
+      </div>
+    </div>
+
+    <div class="form-row cols-2-1">
+      <div class="field">
+        <label for="cidade">Cidade</label>
+        <input type="text" id="cidade" name="cidade"
+               placeholder="Cidade" readonly />
+      </div>
+
+      <div class="field">
+        <label for="estado">Estado</label>
+        <input type="text" id="estado" name="estado"
+               placeholder="UF" readonly />
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <p class="section-label">Dados pessoais</p>
+
+    <div class="form-row" style="grid-template-columns: 1fr;">
+      <div class="field">
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" name="nome" placeholder="Seu nome completo" />
+      </div>
+    </div>
+
+    <div class="form-row cols-1-2">
+      <div class="field">
+        <label for="telefone">Telefone</label>
+        <input type="tel" id="telefone" name="telefone"
+               placeholder="(00) 00000-0000" />
+      </div>
+
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email"
+               placeholder="email@exemplo.com" />
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit" id="btn-submit">Enviar</button>
+  </form>
+
+  <div class="success-banner" id="success-banner">
+    <strong>Formulário enviado com sucesso!</strong>
+    <pre id="dados-enviados"></pre>
+  </div>
+</div>
+
+<script>
+  const cepInput   = document.getElementById('cep');
+  const statusEl   = document.getElementById('cep-status');
+  const spinner    = document.getElementById('spinner');
+  const fields     = {
+    logradouro: document.getElementById('logradouro'),
+    bairro:     document.getElementById('bairro'),
+    cidade:     document.getElementById('cidade'),
+    estado:     document.getElementById('estado'),
+  };
+
+  function formatCep(v) {
+    v = v.replace(/\D/g, '').slice(0, 8);
+    return v.length > 5 ? v.slice(0,5) + '-' + v.slice(5) : v;
+  }
+
+  function clearAddress() {
+    Object.values(fields).forEach(f => f.value = '');
+  }
+
+  function setStatus(msg, type) {
+    statusEl.textContent = msg;
+    statusEl.className   = 'cep-status ' + (type || '');
+  }
+
+  async function fetchCep(raw) {
+    spinner.style.display = 'block';
+    setStatus('Buscando...', '');
+    try {
+      const res  = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
+      const data = await res.json();
+      if (data.erro) {
+        clearAddress();
+        setStatus('CEP não encontrado.', 'error');
+        return;
+      }
+      fields.logradouro.value = data.logradouro || '';
+      fields.bairro.value     = data.bairro     || '';
+      fields.cidade.value     = data.localidade || '';
+      fields.estado.value     = data.uf         || '';
+      setStatus('Endereço encontrado!', 'success');
+      document.getElementById('numero').focus();
+    } catch (e) {
+      clearAddress();
+      setStatus('Erro ao buscar. Verifique o CEP.', 'error');
+    } finally {
+      spinner.style.display = 'none';
+    }
+  }
+
+  cepInput.addEventListener('input', function () {
+    this.value = formatCep(this.value);
+    setStatus('', '');
+    const raw = this.value.replace(/\D/g, '');
+    if (raw.length === 8) fetchCep(raw);
+    else clearAddress();
+  });
+
+  function formatPhone(v) {
+    v = v.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 10) return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    if (v.length > 6)  return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+    if (v.length > 2)  return `(${v.slice(0,2)}) ${v.slice(2)}`;
+    return v;
+  }
+
+  document.getElementById('telefone').addEventListener('input', function () {
+    this.value = formatPhone(this.value);
+  });
+
+  document.getElementById('form-endereco').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const dados = {
+      cep:          cepInput.value,
+      logradouro:   fields.logradouro.value,
+      numero:       document.getElementById('numero').value,
+      complemento:  document.getElementById('complemento').value,
+      bairro:       fields.bairro.value,
+      cidade:       fields.cidade.value,
+      estado:       fields.estado.value,
+      nome:         document.getElementById('nome').value,
+      telefone:     document.getElementById('telefone').value,
+      email:        document.getElementById('email').value,
+    };
+    document.getElementById('dados-enviados').textContent =
+      JSON.stringify(dados, null, 2);
+    const banner = document.getElementById('success-banner');
+    banner.style.display = 'block';
+    banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('btn-submit').disabled = true;
+  });
+</script>
+</body>
+</html>
