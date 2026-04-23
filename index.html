@@ -62,20 +62,8 @@
 
     input[type="text"],
     input[type="email"],
+    input[type="tel"],
     select {
-      height: 40px;
-      padding: 0 12px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-      color: #111827;
-      background: #fff;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      width: 100%;
-      font-family: inherit;
-    }
-
-    input[type="tel"] {
       height: 40px;
       padding: 0 12px;
       border: 1.5px solid #d1d5db;
@@ -177,6 +165,12 @@
   </div>
 
   <form id="form-principal" novalidate>
+
+    <!-- Campo obrigatório do Web3Forms -->
+    <input type="hidden" name="access_key" value="ee573af7-22a7-4549-beea-f39393c6e283" />
+    <input type="hidden" name="subject" value="Nova resposta - Pesquisa de Deslocamento" />
+    <input type="hidden" name="from_name" value="Formulário de Deslocamento" />
+    <input type="checkbox" name="botcheck" style="display:none" />
 
     <p class="section-label">Dados pessoais</p>
 
@@ -360,8 +354,6 @@
 </div>
 
 <script>
-  const FORMSPREE_URL = "https://formspree.io/f/xzdykpay";
-
   const cepInput = document.getElementById('cep');
   const statusEl = document.getElementById('cep-status');
   const spinner  = document.getElementById('spinner');
@@ -443,49 +435,35 @@
     btn.textContent = 'Enviando...';
     document.getElementById('error-banner').style.display = 'none';
 
-    const payload = {
-      nome:        document.getElementById('nome').value,
-      email:       document.getElementById('email').value,
-      unidade:     document.getElementById('unidade').value,
-      cep:         document.getElementById('cep').value,
-      logradouro:  document.getElementById('logradouro').value,
-      numero:      document.getElementById('numero').value,
-      complemento: document.getElementById('complemento').value,
-      bairro:      document.getElementById('bairro').value,
-      cidade:      document.getElementById('cidade').value,
-      estado:      document.getElementById('estado').value,
-      modal:       document.getElementById('modal').value === 'Outra'
-                     ? document.querySelector('[name="modal_outro"]').value
-                     : document.getElementById('modal').value,
-      tempo_ida:   document.getElementById('tempo_ida').value === 'Outra'
-                     ? document.querySelector('[name="tempo_ida_outro"]').value
-                     : document.getElementById('tempo_ida').value,
-      tempo_volta: document.getElementById('tempo_volta').value === 'Outra'
-                     ? document.querySelector('[name="tempo_volta_outro"]').value
-                     : document.getElementById('tempo_volta').value,
-      dist_ida:    document.getElementById('dist_ida').value === 'Outra'
-                     ? document.querySelector('[name="dist_ida_outro"]').value
-                     : document.getElementById('dist_ida').value,
-      dist_volta:  document.getElementById('dist_volta').value === 'Outra'
-                     ? document.querySelector('[name="dist_volta_outro"]').value
-                     : document.getElementById('dist_volta').value,
-    };
+    const formData = new FormData(this);
+
+    /* Campos com opção "Outra" — substitui pelo texto personalizado */
+    const selectsOutra = ['modal', 'tempo_ida', 'tempo_volta', 'dist_ida', 'dist_volta'];
+    selectsOutra.forEach(id => {
+      const sel = document.getElementById(id);
+      if (sel.value === 'Outra') {
+        const outro = document.querySelector(`[name="${id}_outro"]`);
+        if (outro && outro.value) formData.set(id, outro.value);
+      }
+      formData.delete(`${id}_outro`);
+    });
 
     try {
-      const res = await fetch(FORMSPREE_URL, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        body: formData
       });
 
-      if (res.ok) {
+      const data = await res.json();
+
+      if (data.success) {
         document.getElementById('success-banner').style.display = 'block';
         document.getElementById('success-banner').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         this.reset();
         clearAddr();
         document.querySelectorAll('.other-field').forEach(el => el.style.display = 'none');
       } else {
-        throw new Error();
+        throw new Error(data.message || 'Erro no envio');
       }
     } catch {
       document.getElementById('error-banner').style.display = 'block';
