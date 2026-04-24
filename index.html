@@ -359,25 +359,7 @@
           <label for="tipo_deficiencia">Qual a deficiência? <span class="req">*</span></label>
           <input type="text" id="tipo_deficiencia" name="tipo_deficiencia" placeholder="Descreva o tipo de deficiência..." />
         </div>
-        <div class="field">
-          <label>Anexar laudo <span style="color:#9ca3af;font-size:11px;font-weight:400;">(opcional — PDF, JPG ou PNG, máx. 5MB)</span></label>
-          <div id="upload-area" onclick="document.getElementById('laudo_arquivo').click()"
-            style="border:1.5px dashed #fed7aa;border-radius:8px;padding:14px;text-align:center;background:#fffbf5;margin-top:2px;cursor:pointer;transition:background 0.15s;"
-            onmouseover="this.style.background='#fff3e0'" onmouseout="this.style.background='#fffbf5'">
-            <div style="font-size:22px;margin-bottom:6px;">📎</div>
-            <div style="font-size:13px;color:#92400e;font-weight:500;margin-bottom:4px;">Clique para selecionar o arquivo</div>
-            <div style="font-size:11px;color:#a16207;">PDF, JPG ou PNG — máximo 5MB</div>
-          </div>
-          <input type="file" id="laudo_arquivo" name="attachment"
-            accept=".pdf,.jpg,.jpeg,.png"
-            style="display:none;"
-            onchange="mostrarArquivo(this)" />
-          <div id="arquivo-info" style="display:none;margin-top:8px;background:#fff;border:1px solid #fed7aa;border-radius:6px;padding:8px 12px;align-items:center;justify-content:space-between;font-size:12px;color:#92400e;">
-            <span>📄 <span id="arquivo-nome"></span></span>
-            <button type="button" onclick="removerArquivo()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;padding:0 4px;line-height:1;">✕</button>
-          </div>
-          <p style="font-size:11px;color:#9ca3af;margin-top:5px;">O laudo será enviado como anexo por e-mail junto com as respostas.</p>
-        </div>
+
       </div>
     </div>
 
@@ -711,30 +693,6 @@
     else clearAddr();
   });
 
-  // ── Upload de laudo ───────────────────────────────────────
-  function mostrarArquivo(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    // Validar tamanho (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('O arquivo é muito grande. O tamanho máximo permitido é 5MB.');
-      input.value = '';
-      return;
-    }
-
-    document.getElementById('arquivo-nome').textContent = file.name;
-    const info = document.getElementById('arquivo-info');
-    info.style.display = 'flex';
-    document.getElementById('upload-area').style.display = 'none';
-  }
-
-  function removerArquivo() {
-    document.getElementById('laudo_arquivo').value = '';
-    document.getElementById('arquivo-info').style.display = 'none';
-    document.getElementById('upload-area').style.display = 'block';
-  }
-
   // ── Condicionais ─────────────────────────────────────────
   function toggleFilhos() {
     const val   = document.querySelector('input[name="possui_filhos"]:checked')?.value;
@@ -849,7 +807,6 @@
         document.getElementById('success-banner').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         this.reset();
         document.getElementById('lgpd_aceite').checked = false;
-        removerArquivo();
         clearAddr();
         document.querySelectorAll('.other-field').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.conditional-section').forEach(el => el.style.display = 'none');
