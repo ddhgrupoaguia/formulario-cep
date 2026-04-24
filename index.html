@@ -59,12 +59,13 @@
     }
 
     label .req { color: #ef4444; font-size: 12px; }
+    label .opt { color: #9ca3af; font-size: 11px; font-weight: 400; }
 
     input[type="text"],
     input[type="email"],
     input[type="tel"],
-    select {
-      height: 40px;
+    select,
+    textarea {
       padding: 0 12px;
       border: 1.5px solid #d1d5db;
       border-radius: 8px;
@@ -76,6 +77,17 @@
       font-family: inherit;
     }
 
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select { height: 40px; }
+
+    textarea {
+      height: 90px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
     select {
       cursor: pointer;
       appearance: none;
@@ -85,7 +97,7 @@
       padding-right: 32px;
     }
 
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: #6366f1;
       box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
@@ -99,9 +111,15 @@
 
     input[readonly]:focus { border-color: #d1d5db; box-shadow: none; }
 
+    /* Radio buttons */
+    .radio-group { display: flex; gap: 16px; margin-top: 2px; }
+    .radio-option { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .radio-option input[type="radio"] { width: 16px; height: 16px; accent-color: #6366f1; cursor: pointer; }
+    .radio-option span { font-size: 14px; color: #374151; }
+
+    /* CEP */
     .cep-wrapper { position: relative; }
     .cep-wrapper input { padding-right: 40px; }
-
     .cep-spinner {
       position: absolute; right: 12px; top: 50%;
       transform: translateY(-50%); display: none;
@@ -110,11 +128,11 @@
       border-radius: 50%; animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
-
     .cep-status { font-size: 12px; min-height: 16px; margin-top: 3px; }
     .cep-status.success { color: #059669; }
     .cep-status.error   { color: #dc2626; }
 
+    /* Distância */
     .dist-box {
       background: #f0fdf4;
       border: 1.5px solid #6ee7b7;
@@ -123,58 +141,42 @@
       margin-bottom: 16px;
       display: none;
     }
-
     .dist-box .dist-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: #065f46;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 12px; font-weight: 600; color: #065f46;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .dist-values { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .dist-item { background: #fff; border-radius: 8px; padding: 8px 12px; border: 1px solid #a7f3d0; }
+    .dist-item .dist-label { font-size: 11px; color: #6b7280; margin-bottom: 2px; }
+    .dist-item .dist-value { font-size: 16px; font-weight: 700; color: #059669; }
+    .dist-item .dist-time  { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+
+    /* Seções condicionais */
+    .conditional-section {
+      display: none;
+      background: #f8faff;
+      border: 1px solid #e0e7ff;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 10px;
+    }
+    .conditional-section .section-inner-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #6366f1; margin-bottom: 12px;
     }
 
-    .dist-box .dist-values {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .dist-item {
-      background: #fff;
-      border-radius: 8px;
-      padding: 8px 12px;
-      border: 1px solid #a7f3d0;
-    }
-
-    .dist-item .dist-label {
-      font-size: 11px;
-      color: #6b7280;
-      margin-bottom: 2px;
-    }
-
-    .dist-item .dist-value {
-      font-size: 16px;
-      font-weight: 700;
-      color: #059669;
-    }
-
-    .dist-item .dist-time {
-      font-size: 11px;
-      color: #9ca3af;
-      margin-top: 1px;
-    }
-
-    .dist-loading {
-      font-size: 12px;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
+    /* Other field */
     .other-field { display: none; margin-top: 8px; }
-    .other-field input { width: 100%; }
+    .other-field input, .other-field textarea { width: 100%; }
+
+    /* Hint text */
+    .field-hint {
+      font-size: 12px;
+      color: #9ca3af;
+      font-style: italic;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
 
     .btn-submit {
       width: 100%; height: 44px;
@@ -211,7 +213,7 @@
       .form-row.cols-1-2,
       .form-row.cols-3,
       .form-row.cols-2-1 { grid-template-columns: 1fr; }
-      .dist-box .dist-values { grid-template-columns: 1fr; }
+      .dist-values { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -220,7 +222,7 @@
 <div class="card">
   <div class="card-header">
     <h1>Pesquisa de deslocamento</h1>
-    <p>Todos os campos são obrigatórios. Digite o CEP e o endereço e a distância serão preenchidos automaticamente.</p>
+    <p>Todos os campos marcados com * são obrigatórios. Digite o CEP e o endereço e a distância serão preenchidos automaticamente.</p>
   </div>
 
   <form id="form-principal" novalidate>
@@ -232,6 +234,7 @@
     <input type="hidden" name="tempo_viagem" id="hidden_tempo" value="" />
     <input type="checkbox" name="botcheck" style="display:none" />
 
+    <!-- ── DADOS PESSOAIS ─────────────────────────────────── -->
     <p class="section-label">Dados pessoais</p>
 
     <div class="form-row" style="grid-template-columns:1fr;">
@@ -249,6 +252,8 @@
     </div>
 
     <hr class="divider" />
+
+    <!-- ── UNIDADE DE NEGÓCIO ─────────────────────────────── -->
     <p class="section-label">Unidade de negócio</p>
 
     <div class="form-row" style="grid-template-columns:1fr;">
@@ -268,6 +273,137 @@
     </div>
 
     <hr class="divider" />
+
+    <!-- ── PERFIL FAMILIAR ────────────────────────────────── -->
+    <p class="section-label">Perfil familiar</p>
+
+    <!-- Estado civil -->
+    <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
+      <div class="field">
+        <label for="estado_civil">Estado civil <span class="req">*</span></label>
+        <select id="estado_civil" name="estado_civil" required onchange="toggleOther('estado_civil','estado-civil-outro')">
+          <option value="" disabled selected>Selecione...</option>
+          <option>Solteiro(a)</option>
+          <option>Casado(a)</option>
+          <option>Viúvo(a)</option>
+          <option>Divorciado(a)</option>
+          <option value="Outro">Outro</option>
+        </select>
+        <div class="other-field" id="estado-civil-outro">
+          <input type="text" name="estado_civil_outro" placeholder="Descreva seu estado civil..." />
+        </div>
+      </div>
+    </div>
+
+    <!-- Filhos -->
+    <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
+      <div class="field">
+        <label>Você possui filhos? <span class="req">*</span></label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="possui_filhos" value="Sim" onchange="toggleFilhos()" required />
+            <span>Sim</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="possui_filhos" value="Não" onchange="toggleFilhos()" />
+            <span>Não</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção condicional: filhos -->
+    <div class="conditional-section" id="secao-filhos">
+      <div class="section-inner-label">Informações sobre filhos</div>
+
+      <!-- Quantos filhos -->
+      <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
+        <div class="field">
+          <label for="qtd_filhos">Quantos filhos? <span class="req">*</span></label>
+          <select id="qtd_filhos" name="qtd_filhos" onchange="toggleOther('qtd_filhos','qtd-filhos-outro')">
+            <option value="" disabled selected>Selecione...</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option value="Outro">Outro</option>
+          </select>
+          <div class="other-field" id="qtd-filhos-outro">
+            <input type="text" name="qtd_filhos_outro" placeholder="Informe a quantidade..." />
+          </div>
+        </div>
+      </div>
+
+      <!-- Filho com deficiência -->
+      <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
+        <div class="field">
+          <label>Seu filho possui algum tipo de deficiência com laudo? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="filho_deficiencia" value="Sim" onchange="toggleDeficiencia()" />
+              <span>Sim</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="filho_deficiencia" value="Não" onchange="toggleDeficiencia()" />
+              <span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção condicional: deficiência -->
+      <div class="conditional-section" id="secao-deficiencia" style="background:#fff8f0;border-color:#fed7aa;">
+        <div class="section-inner-label" style="color:#ea580c;">Sobre a deficiência</div>
+        <div class="field">
+          <label for="tipo_deficiencia">Qual a deficiência? <span class="req">*</span></label>
+          <input type="text" id="tipo_deficiencia" name="tipo_deficiencia" placeholder="Descreva o tipo de deficiência..." />
+        </div>
+      </div>
+    </div>
+
+    <!-- Situação familiar -->
+    <div class="form-row" style="grid-template-columns:1fr; margin-top:16px;">
+      <div class="field">
+        <label for="situacao_familiar">Situação familiar <span class="opt">(opcional)</span></label>
+        <p class="field-hint">Caso queira, compartilhe brevemente seu contexto familiar (ex: pais vivos, dependentes, outras responsabilidades familiares).</p>
+        <textarea id="situacao_familiar" name="situacao_familiar" placeholder="Descreva brevemente sua situação familiar..."></textarea>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── CONTATOS DE EMERGÊNCIA ──────────────────────────── -->
+    <p class="section-label">Contato de emergência</p>
+
+    <div class="form-row" style="grid-template-columns:1fr;">
+      <div class="field">
+        <label for="emergencia_nome">Nome do contato <span class="req">*</span></label>
+        <input type="text" id="emergencia_nome" name="emergencia_nome" placeholder="Nome completo" required />
+      </div>
+    </div>
+
+    <div class="form-row" style="grid-template-columns:1fr;">
+      <div class="field">
+        <label for="emergencia_parentesco">Grau de parentesco ou relação <span class="req">*</span></label>
+        <input type="text" id="emergencia_parentesco" name="emergencia_parentesco" placeholder="Ex: Cônjuge, Pai, Amigo..." required />
+      </div>
+    </div>
+
+    <div class="form-row cols-1-2">
+      <div class="field">
+        <label for="emergencia_tel1">Telefone principal <span class="req">*</span></label>
+        <input type="tel" id="emergencia_tel1" name="emergencia_tel1" placeholder="(00) 00000-0000" required />
+      </div>
+      <div class="field">
+        <label for="emergencia_tel2">Telefone alternativo <span class="opt">(opcional)</span></label>
+        <input type="tel" id="emergencia_tel2" name="emergencia_tel2" placeholder="(00) 00000-0000" />
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── ENDEREÇO RESIDENCIAL ───────────────────────────── -->
     <p class="section-label">Endereço residencial</p>
 
     <div class="form-row cols-1-2">
@@ -319,7 +455,7 @@
         Distância até Av. das Américas, 3434 — Barra da Tijuca
       </div>
       <div class="dist-values" id="dist-values">
-        <div class="dist-loading" id="dist-loading">
+        <div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:6px;">
           <div style="width:12px;height:12px;border:2px solid #e5e7eb;border-top-color:#059669;border-radius:50%;animation:spin 0.7s linear infinite"></div>
           Calculando rota...
         </div>
@@ -327,6 +463,8 @@
     </div>
 
     <hr class="divider" />
+
+    <!-- ── DESLOCAMENTO ───────────────────────────────────── -->
     <p class="section-label">Deslocamento</p>
 
     <div class="form-row" style="grid-template-columns:1fr; margin-bottom:8px;">
@@ -396,8 +534,7 @@
 </div>
 
 <script>
-  // ── Endereço fixo de destino ──────────────────────────────
-  // Av. das Américas, 3434 - Barra da Tijuca, Rio de Janeiro - RJ
+  // ── Destino fixo ─────────────────────────────────────────
   const DESTINO_LAT = -22.9994;
   const DESTINO_LNG = -43.3647;
 
@@ -412,18 +549,30 @@
     estado:     document.getElementById('estado'),
   };
 
-  let origemLat = null;
-  let origemLng = null;
+  let origemLat = null, origemLng = null;
 
   function formatCep(v) {
     v = v.replace(/\D/g, '').slice(0, 8);
     return v.length > 5 ? v.slice(0,5) + '-' + v.slice(5) : v;
   }
 
+  function formatTel(v) {
+    v = v.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 10) return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    if (v.length > 6)  return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+    if (v.length > 2)  return `(${v.slice(0,2)}) ${v.slice(2)}`;
+    return v;
+  }
+
+  ['emergencia_tel1','emergencia_tel2'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+      this.value = formatTel(this.value);
+    });
+  });
+
   function clearAddr() {
     Object.values(addr).forEach(f => f.value = '');
-    origemLat = null;
-    origemLng = null;
+    origemLat = origemLng = null;
     document.getElementById('dist-box').style.display = 'none';
     document.getElementById('hidden_distancia').value = '';
     document.getElementById('hidden_tempo').value = '';
@@ -437,36 +586,21 @@
   async function calcularDistancia(lat, lng) {
     const distBox    = document.getElementById('dist-box');
     const distValues = document.getElementById('dist-values');
-    const distLoading = document.getElementById('dist-loading');
-
     distBox.style.display = 'block';
-    distValues.innerHTML = `
-      <div class="dist-loading" id="dist-loading">
-        <div style="width:12px;height:12px;border:2px solid #e5e7eb;border-top-color:#059669;border-radius:50%;animation:spin 0.7s linear infinite"></div>
-        Calculando rota...
-      </div>`;
-
+    distValues.innerHTML = `<div style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border:2px solid #e5e7eb;border-top-color:#059669;border-radius:50%;animation:spin 0.7s linear infinite"></div>Calculando rota...</div>`;
     try {
-      // OSRM — API gratuita de roteamento
-      const url = `https://router.project-osrm.org/route/v1/driving/${lng},${lat};${DESTINO_LNG},${DESTINO_LAT}?overview=false`;
+      const url  = `https://router.project-osrm.org/route/v1/driving/${lng},${lat};${DESTINO_LNG},${DESTINO_LAT}?overview=false`;
       const res  = await fetch(url);
       const data = await res.json();
-
-      if (data.code !== 'Ok' || !data.routes || !data.routes[0]) throw new Error('Rota não encontrada');
-
-      const rota      = data.routes[0];
-      const distKm    = (rota.distance / 1000).toFixed(1);
-      const duracaoMin = Math.round(rota.duration / 60);
-      const horas     = Math.floor(duracaoMin / 60);
-      const minutos   = duracaoMin % 60;
-      const tempoStr  = horas > 0 ? `${horas}h ${minutos}min` : `${minutos} min`;
-
-      // Distância total (ida + volta)
+      if (data.code !== 'Ok' || !data.routes?.[0]) throw new Error();
+      const rota     = data.routes[0];
+      const distKm   = (rota.distance / 1000).toFixed(1);
+      const minTotal = Math.round(rota.duration / 60);
+      const h = Math.floor(minTotal / 60), m = minTotal % 60;
+      const tempoStr = h > 0 ? `${h}h ${m}min` : `${m} min`;
       const distTotal = (parseFloat(distKm) * 2).toFixed(1);
-
       document.getElementById('hidden_distancia').value = `${distKm} km (ida) / ${distTotal} km (ida+volta)`;
       document.getElementById('hidden_tempo').value = `${tempoStr} (estimado por rota de carro)`;
-
       distValues.innerHTML = `
         <div class="dist-item">
           <div class="dist-label">📍 Distância (ida)</div>
@@ -474,14 +608,12 @@
           <div class="dist-time">⏱ ~${tempoStr} de carro</div>
         </div>
         <div class="dist-item">
-          <div class="dist-label">🔄 Distância (ida + volta)</div>
+          <div class="dist-label">🔄 Ida + volta</div>
           <div class="dist-value">${distTotal} km</div>
-          <div class="dist-time">⏱ ~${horas > 0 ? `${horas*2}h ${minutos}min` : `${duracaoMin * 2} min`} de carro</div>
+          <div class="dist-time">⏱ ~${h>0?`${h*2}h ${m}min`:`${minTotal*2} min`} de carro</div>
         </div>`;
-
-    } catch (err) {
-      distValues.innerHTML = `<div style="font-size:12px;color:#dc2626;">Não foi possível calcular a rota. Verifique o endereço.</div>`;
-      document.getElementById('hidden_distancia').value = 'Não calculado';
+    } catch {
+      distValues.innerHTML = `<div style="font-size:12px;color:#dc2626;">Não foi possível calcular a rota.</div>`;
     }
   }
 
@@ -492,43 +624,30 @@
       const res  = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
       const data = await res.json();
       if (data.erro) { clearAddr(); setStatus('CEP não encontrado.', 'error'); return; }
-
       addr.logradouro.value = data.logradouro || '';
       addr.bairro.value     = data.bairro     || '';
       addr.cidade.value     = data.localidade || '';
       addr.estado.value     = data.uf         || '';
       setStatus('Endereço encontrado!', 'success');
       document.getElementById('numero').focus();
-
-      // Buscar coordenadas via Nominatim (OpenStreetMap) — gratuito
-      const enderecoCompleto = encodeURIComponent(
-        `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}, Brasil`
-      );
-      const geoRes  = await fetch(`https://nominatim.openstreetmap.org/search?q=${enderecoCompleto}&format=json&limit=1`, {
-        headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'PesquisaDeslocamento/1.0' }
-      });
+      const q = encodeURIComponent(`${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}, Brasil`);
+      const geoRes  = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'PesquisaDeslocamento/1.0' } });
       const geoData = await geoRes.json();
-
-      if (geoData && geoData.length > 0) {
+      if (geoData?.length > 0) {
         origemLat = parseFloat(geoData[0].lat);
         origemLng = parseFloat(geoData[0].lon);
         await calcularDistancia(origemLat, origemLng);
       } else {
-        // Fallback: usar coordenadas do CEP diretamente
-        const cepGeoRes  = await fetch(`https://nominatim.openstreetmap.org/search?postalcode=${raw}&country=BR&format=json&limit=1`, {
-          headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'PesquisaDeslocamento/1.0' }
-        });
-        const cepGeoData = await cepGeoRes.json();
-        if (cepGeoData && cepGeoData.length > 0) {
-          origemLat = parseFloat(cepGeoData[0].lat);
-          origemLng = parseFloat(cepGeoData[0].lon);
+        const cepRes  = await fetch(`https://nominatim.openstreetmap.org/search?postalcode=${raw}&country=BR&format=json&limit=1`, { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'PesquisaDeslocamento/1.0' } });
+        const cepData = await cepRes.json();
+        if (cepData?.length > 0) {
+          origemLat = parseFloat(cepData[0].lat);
+          origemLng = parseFloat(cepData[0].lon);
           await calcularDistancia(origemLat, origemLng);
         }
       }
-
     } catch {
-      clearAddr();
-      setStatus('Erro ao buscar. Verifique o CEP.', 'error');
+      clearAddr(); setStatus('Erro ao buscar. Verifique o CEP.', 'error');
     } finally {
       spinner.style.display = 'none';
     }
@@ -542,24 +661,61 @@
     else clearAddr();
   });
 
-  // ── Campo "Outra" ─────────────────────────────────────────
-  function toggleOther(selectId, otherId) {
-    const sel   = document.getElementById(selectId);
-    const other = document.getElementById(otherId);
-    const input = other.querySelector('input');
-    if (sel.value === 'Outra') {
-      other.style.display = 'block';
-      input.required = true;
-    } else {
-      other.style.display = 'none';
-      input.required = false;
-      input.value = '';
+  // ── Condicionais ─────────────────────────────────────────
+  function toggleFilhos() {
+    const val   = document.querySelector('input[name="possui_filhos"]:checked')?.value;
+    const secao = document.getElementById('secao-filhos');
+    secao.style.display = val === 'Sim' ? 'block' : 'none';
+    // Tornar campos obrigatórios
+    const campos = secao.querySelectorAll('select, input[type="radio"]');
+    campos.forEach(c => c.required = val === 'Sim');
+    if (val !== 'Sim') {
+      document.getElementById('secao-deficiencia').style.display = 'none';
     }
   }
 
-  // ── Envio via Web3Forms ───────────────────────────────────
+  function toggleDeficiencia() {
+    const val   = document.querySelector('input[name="filho_deficiencia"]:checked')?.value;
+    const secao = document.getElementById('secao-deficiencia');
+    secao.style.display = val === 'Sim' ? 'block' : 'none';
+    document.getElementById('tipo_deficiencia').required = val === 'Sim';
+  }
+
+  function toggleOther(selectId, otherId) {
+    const sel   = document.getElementById(selectId);
+    const other = document.getElementById(otherId);
+    const input = other.querySelector('input, textarea');
+    if (sel.value === 'Outro' || sel.value === 'Outra') {
+      other.style.display = 'block';
+      if (input) input.required = true;
+    } else {
+      other.style.display = 'none';
+      if (input) { input.required = false; input.value = ''; }
+    }
+  }
+
+  // ── Envio ─────────────────────────────────────────────────
   document.getElementById('form-principal').addEventListener('submit', async function (e) {
     e.preventDefault();
+
+    // Validação de radios obrigatórios
+    const radiosRequired = [
+      { name: 'possui_filhos', label: 'Você possui filhos?' }
+    ];
+    for (const r of radiosRequired) {
+      if (!document.querySelector(`input[name="${r.name}"]:checked`)) {
+        alert(`Por favor, responda: "${r.label}"`);
+        return;
+      }
+    }
+
+    // Validação de radios condicionais
+    if (document.getElementById('secao-filhos').style.display === 'block') {
+      if (!document.querySelector('input[name="filho_deficiencia"]:checked')) {
+        alert('Por favor, responda se seu filho possui deficiência com laudo.');
+        return;
+      }
+    }
 
     const selects = this.querySelectorAll('select[required]');
     let valid = true;
@@ -576,31 +732,36 @@
 
     const formData = new FormData(this);
 
-    const selectsOutra = ['modal', 'tempo_ida', 'tempo_volta'];
+    // Substituir "Outro/Outra" pelo texto digitado
+    const selectsOutra = ['estado_civil', 'qtd_filhos', 'modal', 'tempo_ida', 'tempo_volta'];
     selectsOutra.forEach(id => {
       const sel = document.getElementById(id);
-      if (sel && sel.value === 'Outra') {
+      if (sel && (sel.value === 'Outro' || sel.value === 'Outra')) {
         const outro = document.querySelector(`[name="${id}_outro"]`);
-        if (outro && outro.value) formData.set(id, outro.value);
+        if (outro?.value) formData.set(id, outro.value);
       }
       formData.delete(`${id}_outro`);
     });
 
-    try {
-      const res  = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
+    // Se não tem filhos, limpar campos de filhos
+    if (document.querySelector('input[name="possui_filhos"]:checked')?.value !== 'Sim') {
+      formData.delete('qtd_filhos');
+      formData.delete('filho_deficiencia');
+      formData.delete('tipo_deficiencia');
+    }
 
+    try {
+      const res  = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData });
+      const data = await res.json();
       if (data.success) {
         document.getElementById('success-banner').style.display = 'block';
         document.getElementById('success-banner').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         this.reset();
         clearAddr();
         document.querySelectorAll('.other-field').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.conditional-section').forEach(el => el.style.display = 'none');
       } else {
-        throw new Error(data.message || 'Erro no envio');
+        throw new Error(data.message || 'Erro');
       }
     } catch {
       document.getElementById('error-banner').style.display = 'block';
