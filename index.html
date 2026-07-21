@@ -1272,6 +1272,138 @@
           </div>
         </div>
 
+        <!-- Beneficiário do seguro de vida -->
+        <div class="sub-section-label" style="margin-top:16px;">Beneficiário do seguro de vida</div>
+        <p class="field-hint" style="margin-bottom:10px;">Quem é seu beneficiário no seguro de vida? É possível indicar até 2 pessoas. É necessário que sejam pessoas com vínculo direto com o segurado (colaborador).</p>
+
+        <!-- Beneficiário 1 -->
+        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#374151;margin-bottom:12px;">Beneficiário 1 <span class="req">*</span></div>
+
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="benef1_nome">Nome completo <span class="req">*</span></label>
+              <input type="text" id="benef1_nome" name="benef1_nome" placeholder="Nome completo do beneficiário" required />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="benef1_doc_tipo">Natureza do documento de identificação <span class="req">*</span></label>
+              <select id="benef1_doc_tipo" name="benef1_doc_tipo" required>
+                <option value="" disabled selected>Selecione...</option>
+                <option>RG</option>
+                <option>CNH</option>
+                <option>Passaporte</option>
+                <option>RNE ou CRNM</option>
+                <option>Certidão de Nascimento</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="benef1_doc_numero">Número do documento <span class="req">*</span></label>
+              <input type="text" id="benef1_doc_numero" name="benef1_doc_numero" placeholder="Número do documento" required />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="benef1_doc_orgao">Órgão expedidor <span class="req">*</span></label>
+              <input type="text" id="benef1_doc_orgao" name="benef1_doc_orgao" placeholder="Ex.: SSP/RJ" required />
+            </div>
+            <div class="field">
+              <label for="benef1_doc_data_expedicao">Data de expedição <span class="req">*</span></label>
+              <input type="text" id="benef1_doc_data_expedicao" name="benef1_doc_data_expedicao" placeholder="DD/MM/AAAA" required />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="benef1_nascimento">Data de nascimento <span class="req">*</span></label>
+              <input type="text" id="benef1_nascimento" name="benef1_nascimento" placeholder="DD/MM/AAAA" required />
+            </div>
+            <div class="field">
+              <label for="benef1_parentesco">Parentesco <span class="req">*</span></label>
+              <select id="benef1_parentesco" name="benef1_parentesco" required>
+                <option value="" disabled selected>Selecione...</option>
+                <option value="A">A - Avô(ó)</option>
+                <option value="C">C - Cônjuge</option>
+                <option value="F">F - Filho(a)</option>
+                <option value="H">H - Companheiro(a)</option>
+                <option value="I">I - Irmão(ã)</option>
+                <option value="M">M - Mãe</option>
+                <option value="N">N - Neto(a)</option>
+                <option value="P">P - Pai</option>
+                <option value="S">S - Sobrinho(a)</option>
+                <option value="T">T - Tio(a)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Beneficiário 2 -->
+        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#374151;margin-bottom:12px;">Beneficiário 2 <span class="opt">(opcional)</span></div>
+
+          <div class="form-row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label for="benef2_nome">Nome completo <span class="opt">(opcional)</span></label>
+              <input type="text" id="benef2_nome" name="benef2_nome" placeholder="Nome completo do beneficiário" />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="benef2_doc_tipo">Natureza do documento de identificação <span class="opt">(opcional)</span></label>
+              <select id="benef2_doc_tipo" name="benef2_doc_tipo">
+                <option value="" disabled selected>Selecione...</option>
+                <option>RG</option>
+                <option>CNH</option>
+                <option>Passaporte</option>
+                <option>RNE ou CRNM</option>
+                <option>Certidão de Nascimento</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="benef2_doc_numero">Número do documento <span class="opt">(opcional)</span></label>
+              <input type="text" id="benef2_doc_numero" name="benef2_doc_numero" placeholder="Número do documento" />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="benef2_doc_orgao">Órgão expedidor <span class="opt">(opcional)</span></label>
+              <input type="text" id="benef2_doc_orgao" name="benef2_doc_orgao" placeholder="Ex.: SSP/RJ" />
+            </div>
+            <div class="field">
+              <label for="benef2_doc_data_expedicao">Data de expedição <span class="opt">(opcional)</span></label>
+              <input type="text" id="benef2_doc_data_expedicao" name="benef2_doc_data_expedicao" placeholder="DD/MM/AAAA" />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="benef2_nascimento">Data de nascimento <span class="opt">(opcional)</span></label>
+              <input type="text" id="benef2_nascimento" name="benef2_nascimento" placeholder="DD/MM/AAAA" />
+            </div>
+            <div class="field">
+              <label for="benef2_parentesco">Parentesco <span class="opt">(opcional)</span></label>
+              <select id="benef2_parentesco" name="benef2_parentesco">
+                <option value="" disabled selected>Selecione...</option>
+                <option value="A">A - Avô(ó)</option>
+                <option value="C">C - Cônjuge</option>
+                <option value="F">F - Filho(a)</option>
+                <option value="H">H - Companheiro(a)</option>
+                <option value="I">I - Irmão(ã)</option>
+                <option value="M">M - Mãe</option>
+                <option value="N">N - Neto(a)</option>
+                <option value="P">P - Pai</option>
+                <option value="S">S - Sobrinho(a)</option>
+                <option value="T">T - Tio(a)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <!-- Saúde emergencial -->
         <div class="sub-section-label" style="margin-top:16px;">Observação emergencial de saúde</div>
 
