@@ -1691,6 +1691,48 @@
     </div>
 
     <!-- ══════════════════════════════════════
+         BLOCO 08 · DADOS PARA RECEBIMENTO (CHAVE PIX)
+    ═══════════════════════════════════════ -->
+    <div class="block-section">
+      <div class="block-header">
+        <span class="block-number">BLOCO 08</span>
+        <span class="block-title">Dados para Recebimento (Chave PIX)</span>
+      </div>
+      <p class="block-desc">Informe os dados da chave PIX que deve ser utilizada para eventuais pagamentos e reembolsos ao colaborador.</p>
+      <div class="block-body">
+
+        <div class="form-row cols-1-2">
+          <div class="field">
+            <label for="pix_tipo">Tipo de chave PIX <span class="req">*</span></label>
+            <select id="pix_tipo" name="pix_tipo" required onchange="toggleOther('pix_tipo','pix-tipo-outra')">
+              <option value="" disabled selected>Selecione...</option>
+              <option>Telefone</option>
+              <option>CPF</option>
+              <option>E-mail</option>
+              <option>Chave aleatória</option>
+              <option value="Outra">Outra</option>
+            </select>
+            <div class="other-field" id="pix-tipo-outra">
+              <input type="text" name="pix_tipo_outra" placeholder="Descreva o tipo de chave..." />
+            </div>
+          </div>
+          <div class="field">
+            <label for="pix_chave">Chave PIX <span class="req">*</span></label>
+            <input type="text" id="pix_chave" name="pix_chave" required placeholder="Informe a chave PIX (número, CPF, e-mail ou chave aleatória)" />
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns:1fr;">
+          <div class="field">
+            <label for="pix_titular">Nome completo do titular da conta <span class="req">*</span></label>
+            <input type="text" id="pix_titular" name="pix_titular" required placeholder="Nome completo, conforme conta bancária" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
          LGPD
     ═══════════════════════════════════════ -->
     <div style="background:#f0f8fd;border:1.5px solid #b3ddf5;border-radius:12px;padding:16px 18px;margin-bottom:1.5rem;">
@@ -1978,7 +2020,7 @@
       formData.set(grp, checked.join('; '));
     });
 
-    const selectsOutra = ['estado_civil','qtd_filhos','modal','empresa','gestor_direto','local_trabalho'];
+    const selectsOutra = ['estado_civil','qtd_filhos','modal','empresa','gestor_direto','local_trabalho','pix_tipo'];
     selectsOutra.forEach(id => {
       const sel = document.getElementById(id);
       if (sel && (sel.value === 'Outro' || sel.value === 'Outra')) {
